@@ -19,12 +19,12 @@ class Field {
     this.boids.forEach((boid) => boid.render());
   }
 
-  updateState() {
-    this.boids.forEach((boid) => boid.updateState());
+  updateBoids() {
+    this.boids.forEach((boid) => boid.update(this.boids));
   }
 
   tick() {
-    this.updateState();
+    this.updateBoids();
     this.render();
   }
 }

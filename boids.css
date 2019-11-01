@@ -6,6 +6,8 @@
   position: relative;
   border: 1px solid darkgrey;
   border-radius: 7px;
+  padding-top: 5px;
+  padding-right: 5px;
 }
 .boid {
   height: 5px;
