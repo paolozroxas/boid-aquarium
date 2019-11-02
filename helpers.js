@@ -21,6 +21,13 @@ const vMultiplyScalar = (scalar, v) => {
   };
 }
 
+const vMagnitude = (v) => {
+  return Math.sqrt(
+    Math.pow(v.x, 2) +
+    Math.pow(v.y, 2)
+  );
+}
+
 const distance = (coord1, coord2) => {
   return Math.sqrt(
     Math.pow(coord1.x - coord2.x, 2) +

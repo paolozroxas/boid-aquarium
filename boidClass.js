@@ -1,6 +1,12 @@
-const SPEED_FACTOR = 0.001;
-const NEIGHBOR_THRESHOLD_FACTOR = 0.15;
-const COHESION_FACTOR = 0.001;
+const SPEED_FACTOR = 0.005;
+const SPEED_LIMIT = 3;
+
+const COHESION_FACTOR = 0.0005;
+const SEPARATION_FACTOR = 0.005;
+const ALIGNMENT_FACTOR = 0.0015;
+
+const NEIGHBOR_DISTANCE_THRESHOLD = 150;
+const SEPARATION_DISTANCE_THRESHOLD = 15;
 
 class Boid {
   constructor(fieldWidth, fieldHeight, $field) {
@@ -14,7 +20,6 @@ class Boid {
     };
     this.fieldWidth = fieldWidth;
     this.fieldHeight = fieldHeight;
-    this.neighborThreshold = fieldHeight * NEIGHBOR_THRESHOLD_FACTOR;
 
     this.$boid = $('<div class="boid" />');
     $field.append(this.$boid);
@@ -23,13 +28,13 @@ class Boid {
   getNeighbors(boids) {
     return boids.filter((boid) => (
       this !== boid &&
-      distance(this.position, boid.position) <= this.neighborThreshold
+      distance(this.position, boid.position) <= NEIGHBOR_DISTANCE_THRESHOLD
     ));
   }
 
   getCohesionVector(boids) {
     if (boids.length <= 0) {
-      return { x: 0, y: 0};
+      return { x: 0, y: 0 };
     }
 
     const centerOfMass = vMultiplyScalar(
@@ -44,22 +49,54 @@ class Boid {
   }
 
   getSeparationVector(boids) {
+    let separationVector = { x: 0, y: 0 };
 
+    boids.forEach((boid) => {
+      const displacement = vSubtract(boid.position, this.position);
+      if (vMagnitude(displacement) <= SEPARATION_DISTANCE_THRESHOLD) {
+        separationVector = vSubtract(separationVector, displacement);
+      }
+    });
+
+    return vMultiplyScalar(
+      SEPARATION_FACTOR,
+      separationVector,
+    );
   }
 
   getAlignmentVector(boids) {
+    if (boids.length <= 0) {
+      return { x: 0, y: 0 };
+    }
 
+    const centerOfVelocity = vMultiplyScalar(
+      1 / boids.length,
+      vAdd(...boids.map(boid => boid.velocity)),
+    );
+
+    return vMultiplyScalar(
+      ALIGNMENT_FACTOR,
+      vSubtract(centerOfVelocity, this.velocity),
+    );
   }
 
   updateVelocity(boids) {
     // combines velocity and vectors from all three rules
     const neighbors = this.getNeighbors(boids);
-    const cohesionVector = this.getCohesionVector(neighbors);
 
     this.velocity = vAdd(
       this.velocity,
-      cohesionVector,
+      this.getCohesionVector(neighbors),
+      this.getSeparationVector(neighbors),
+      this.getAlignmentVector(neighbors),
     );
+
+    // account for the speed limit
+    const speed = vMagnitude(this.velocity);
+    if (speed > SPEED_LIMIT) {
+      this.velocity = vMultiplyScalar(1 / speed, this.velocity);
+      this.velocity = vMultiplyScalar(SPEED_LIMIT, this.velocity);
+    }
   }
 
   updatePosition() {
