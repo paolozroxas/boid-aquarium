@@ -3,7 +3,7 @@ const SPEED_LIMIT = 3;
 
 const COHESION_FACTOR = 0.0005;
 const SEPARATION_FACTOR = 0.005;
-const ALIGNMENT_FACTOR = 0.0015;
+const ALIGNMENT_FACTOR = 0.001;
 
 const NEIGHBOR_DISTANCE_THRESHOLD = 150;
 const SEPARATION_DISTANCE_THRESHOLD = 15;
@@ -80,15 +80,14 @@ class Boid {
     );
   }
 
-  updateVelocity(boids) {
+  updateVelocity() {
     // combines velocity and vectors from all three rules
-    const neighbors = this.getNeighbors(boids);
 
     this.velocity = vAdd(
       this.velocity,
-      this.getCohesionVector(neighbors),
-      this.getSeparationVector(neighbors),
-      this.getAlignmentVector(neighbors),
+      this.getCohesionVector(this.neighbors),
+      this.getSeparationVector(this.neighbors),
+      this.getAlignmentVector(this.neighbors),
     );
 
     // account for the speed limit
@@ -116,12 +115,18 @@ class Boid {
   }
 
   update(boids) {
-    this.updateVelocity(boids);
+    this.neighbors = this.getNeighbors(boids);
+    this.updateVelocity();
     this.updatePosition();
   }
 
   render() {
+    // render position
     this.$boid.css({ bottom: this.position.y, left: this.position.x });
+    // render rotation
+    this.$boid.css({ transform: `rotate(${vAngle(this.velocity)}rad)`});
+    // render color
+    this.$boid.css({ borderBottomColor: mapScalarToColor(this.neighbors.length) });
   }
   
 }

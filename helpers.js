@@ -34,3 +34,11 @@ const distance = (coord1, coord2) => {
     Math.pow(coord1.y - coord2.y, 2)
   );
 }
+
+const normalize = (val, min = 0, max = 1) => {
+  return (val - min) / (max - min);
+}
+
+const vAngle = (v) => {
+  return Math.atan2(v.x, v.y);
+}

@@ -15,10 +15,6 @@ class Field {
     const speeds = this.boids.map((boid) => {
       return vMagnitude(boid.velocity);
     });
-    console.log("TCL: Field -> constructor -> speeds", speeds)
-    
-    
-    this.render();
   }
 
   render() {
