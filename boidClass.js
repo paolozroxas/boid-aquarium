@@ -3,7 +3,7 @@ const SPEED_LIMIT = 3;
 
 const COHESION_FACTOR = 0.0005;
 const SEPARATION_FACTOR = 0.005;
-const ALIGNMENT_FACTOR = 0.001;
+const ALIGNMENT_FACTOR = 0.0012;
 
 const NEIGHBOR_DISTANCE_THRESHOLD = 150;
 const SEPARATION_DISTANCE_THRESHOLD = 15;
@@ -21,7 +21,7 @@ class Boid {
     this.fieldWidth = fieldWidth;
     this.fieldHeight = fieldHeight;
 
-    this.$boid = $('<div class="boid" />');
+    this.$boid = $('<svg class="boid" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="fish" class="svg-inline--fa fa-fish fa-w-18" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path fill="currentColor" d="M327.1 96c-89.97 0-168.54 54.77-212.27 101.63L27.5 131.58c-12.13-9.18-30.24.6-27.14 14.66L24.54 256 .35 365.77c-3.1 14.06 15.01 23.83 27.14 14.66l87.33-66.05C158.55 361.23 237.13 416 327.1 416 464.56 416 576 288 576 256S464.56 96 327.1 96zm87.43 184c-13.25 0-24-10.75-24-24 0-13.26 10.75-24 24-24 13.26 0 24 10.74 24 24 0 13.25-10.75 24-24 24z"></path></svg>');
     $field.append(this.$boid);
   }
 
@@ -124,9 +124,9 @@ class Boid {
     // render position
     this.$boid.css({ bottom: this.position.y, left: this.position.x });
     // render rotation
-    this.$boid.css({ transform: `rotate(${vAngle(this.velocity)}rad)`});
+    this.$boid.css({ transform: `rotate(${vAngle(this.velocity) - 1.57079632679}rad)`});
     // render color
-    this.$boid.css({ borderBottomColor: mapScalarToColor(this.neighbors.length) });
+    this.$boid.css({ color: mapScalarToColor(this.neighbors.length) });
   }
   
 }
